@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+echo "mise-gotestsum is a mise plugin to install, download or compile gotestsum."

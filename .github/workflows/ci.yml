@@ -1,0 +1,45 @@
+name: ci
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  plugin_test:
+    strategy:
+      matrix:
+        os:
+        - macOS-latest
+        - ubuntu-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Silencing git over hex tag names
+        run: "git config --global advice.objectNameWarning false"
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: 'path/to/go.mod'
+      - name: Running asdf's plugin-test for latest
+        uses: asdf-vm/actions/plugin-test@v1
+        with:
+          command: |
+            command -v gotestsum
+        env:
+          GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+      - name: Running asdf's plugin-test for specific version
+        uses: asdf-vm/actions/plugin-test@v1
+        with:
+          command: |
+            command -v gotestsum
+          version: ref:bc98120bd1b517a70af968159c46bb52a129429f
+        env:
+          GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
